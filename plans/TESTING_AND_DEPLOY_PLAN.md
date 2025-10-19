@@ -48,12 +48,9 @@ ttrpg-dice-roller/
 
 ## Phase 1: Project Configuration
 
-### 1.1 Install UV
+### 1.1 Initialize UV
 
 ```bash
-# Install UV package manager
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
 # Verify installation
 uv --version
 ```
