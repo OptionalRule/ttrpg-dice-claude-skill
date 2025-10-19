@@ -1,0 +1,27 @@
+name: Build and Release Skill Package
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create skill package
+        run: |
+          cd src
+          zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
+
+      - name: Upload Release Asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload ${{ github.event.release.tag_name }} ttrpg-dice-roller.zip --clobber
