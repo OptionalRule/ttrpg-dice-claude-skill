@@ -110,10 +110,10 @@ class CSPRNG:
         """
         Roll a die with the given number of sides using CSPRNG.
         Uses rejection sampling to eliminate modulo bias.
-        
+
         Args:
             sides: Number of sides on the die
-            
+
         Returns:
             Random integer from 1 to sides (inclusive)
         """
@@ -703,10 +703,10 @@ class DiceEvaluator:
 def roll_dice(expression: str) -> Dict[str, Any]:
     """
     Main entry point: parse and evaluate a dice expression.
-    
+
     Args:
         expression: Dice notation string (e.g., "4d6kh3+2")
-    
+
     Returns:
         Dict with structure:
         {
@@ -718,7 +718,7 @@ def roll_dice(expression: str) -> Dict[str, Any]:
             "limits": safety limits used,
             "version": version string
         }
-        
+
         Or on error:
         {
             "ok": False,

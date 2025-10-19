@@ -35,9 +35,14 @@ addopts = [
 ]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py38"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
-ignore = []
+ignore = [
+    "N815",  # Allow mixedCase variable names in class scope (e.g., keptValues for JSON compatibility)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/scripts/dice_roller.py" = ["E501"]  # Allow longer lines in dice_roller.py for readability
