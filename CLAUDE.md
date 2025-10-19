@@ -26,12 +26,18 @@ The script outputs structured JSON with complete roll information.
 
 ### Building the Skill Package
 
-```bash
-# Build the skill zip file for distribution
-python3 build.py
+For local testing only (official releases are built automatically by GitHub Actions):
 
-# The output will be in dist/ttrpg-dice-roller.zip
+```bash
+# Build the skill zip file manually
+cd src
+zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
+cd ..
+
+# The output will be at ttrpg-dice-roller.zip
 ```
+
+For official releases, create a GitHub release and the zip is built automatically.
 
 ### Future Testing (Once Implemented)
 

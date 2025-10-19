@@ -68,16 +68,18 @@ If you want to build the skill package yourself:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ttrpg-dice-roller.git
-cd ttrpg-dice-roller
+git clone https://github.com/OptionalRule/ttrpg-dice-claude-skill.git
+cd ttrpg-dice-claude-skill
 
-# Build the skill package
-python3 build.py
+# Build the skill package manually
+cd src
+zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
+cd ..
 
-# The skill package will be created at dist/ttrpg-dice-roller.zip
+# The skill package will be created at ttrpg-dice-roller.zip
 ```
 
-The build script will create a properly packaged skill zip file ready to upload to Claude.
+**Note:** Official releases are built automatically by GitHub Actions. This manual build is only for testing purposes.
 
 ---
 
@@ -94,9 +96,10 @@ ttrpg-dice-roller/
 │   └── scripts/
 │       └── dice_roller.py       # Core implementation (~800 lines)
 ├── README.md                    # This file
-├── LICENSE.txt                  # MIT License
-└── build.py                     # Build script (generates zip)
+└── LICENSE.txt                  # MIT License
 ```
+
+Official releases are built automatically via GitHub Actions.
 
 ### Testing the Dice Roller Directly
 
@@ -442,7 +445,7 @@ To add new features:
 3. Update `src/SKILL.md` with new notation documentation
 4. Add examples and tests
 5. Update this README
-6. Rebuild the skill package with `python3 build.py`
+6. Create a new GitHub release to automatically build and publish the updated skill package
 
 ## Use Cases
 

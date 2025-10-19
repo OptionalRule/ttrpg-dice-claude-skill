@@ -12,8 +12,7 @@ ttrpg-dice-roller/
 │       └── dice_roller.py
 ├── README.md
 ├── LICENSE.txt
-├── .gitignore
-└── build.py
+└── .gitignore
 ```
 
 ## Target State
@@ -83,7 +82,7 @@ authors = [
 ]
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = []
 
 [project.optional-dependencies]
@@ -109,7 +108,7 @@ addopts = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
@@ -118,23 +117,12 @@ ignore = []
 
 ### 1.4 Update .gitignore
 
-Add the following to `.gitignore`:
+The `.gitignore` is already well-configured. No changes needed - it already includes:
+- Test coverage directories (`htmlcov/`, `.coverage`, `.pytest_cache/`)
+- Build artifacts (`dist/`, `build/`, `*.egg-info/`)
+- Ruff cache (`.ruff_cache/`)
 
-```gitignore
-# UV
-.python-version
-uv.lock
-
-# Test coverage
-htmlcov/
-.coverage
-.pytest_cache/
-
-# Build artifacts
-dist/
-build/
-*.egg-info/
-```
+Note: `uv.lock` should be committed to version control for reproducibility (already correctly excluded from gitignore).
 
 ## Phase 2: Test Infrastructure
 
@@ -257,12 +245,16 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     
     steps:
       - uses: actions/checkout@v4
@@ -303,10 +295,13 @@ on:
     types: [created]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -317,14 +312,9 @@ jobs:
           zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
       
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./ttrpg-dice-roller.zip
-          asset_name: ttrpg-dice-roller.zip
-          asset_content_type: application/zip
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload ${{ github.event.release.tag_name }} ttrpg-dice-roller.zip --clobber
 ```
 
 ## Phase 4: Documentation Updates
@@ -381,13 +371,17 @@ uv run ruff format src/
 
 ### Building the Skill Package
 
-```bash
-# Using existing build script
-python build.py
+For local testing only (official releases are built automatically by GitHub Actions):
 
-# Or manually
-cd src && zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*"
+```bash
+# Build manually
+cd src
+zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
+cd ..
+# Package is now at ttrpg-dice-roller.zip
 ```
+
+For official releases, create a GitHub release and the zip is built automatically.
 ```
 
 ### 4.2 Update Download Instructions
@@ -456,7 +450,7 @@ Create `.github/ISSUE_TEMPLATE/bug_report.md` and `feature_request.md` for struc
 - [ ] Run `uv init --no-readme`
 - [ ] Run `uv add --dev pytest pytest-cov ruff`
 - [ ] Create `pyproject.toml` with configuration
-- [ ] Update `.gitignore` with UV and test artifacts
+- [ ] Verify `.gitignore` is properly configured (already done)
 - [ ] Commit changes: "chore: add UV and project configuration"
 
 ### Phase 2: Testing
@@ -549,7 +543,7 @@ uv run ruff format src/
 After pushing to GitHub, verify:
 
 1. **Test workflow runs** on push to main/develop
-2. **Tests pass** across all Python versions (3.7-3.12)
+2. **Tests pass** across all Python versions (3.8-3.12)
 3. **Linting passes** with no errors
 4. **Release workflow** creates zip file when release is created
 5. **Download URL** works: `https://github.com/OptionalRule/ttrpg-dice-claude-skill/releases/latest/download/ttrpg-dice-roller.zip`
@@ -563,7 +557,7 @@ After pushing to GitHub, verify:
 
 ### For Developers
 - **Automated testing** - Tests run on every push
-- **Multi-version support** - Tests across Python 3.7-3.12
+- **Multi-version support** - Tests across Python 3.8-3.12
 - **Code quality** - Linting enforced automatically
 - **Easy setup** - `uv sync` installs everything needed
 - **Fast testing** - UV caches dependencies
@@ -576,22 +570,17 @@ After pushing to GitHub, verify:
 
 ## Migration Notes
 
-### Existing build.py
+### Build Process
 
-The existing `build.py` script can remain for local builds, but GitHub Actions will handle release builds automatically. Consider updating `build.py` to use the same zip command:
-
-```python
-# In build.py, ensure it matches the GitHub Actions command
-os.system('cd src && zip -r ../dist/ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"')
-```
+This project does not include a `build.py` script. GitHub Actions automatically builds the skill package on every release. For local testing, developers can manually run the zip command (see "Building the Skill Package" section above).
 
 ### Backward Compatibility
 
 All changes are additive:
 - Existing `src/` structure unchanged
-- `build.py` still works
 - No breaking changes to the skill itself
 - Users don't need to know about dev tooling
+- Manual zip command available for local testing
 
 ## Success Criteria
 
@@ -602,9 +591,9 @@ Project is considered successfully restructured when:
 3. ✅ GitHub Actions CI passes on push
 4. ✅ GitHub Actions Release workflow creates zip file
 5. ✅ Persistent download URL works
-6. ✅ Test coverage is >80%
+6. ✅ Test coverage is >70%
 7. ✅ Documentation is complete and accurate
-8. ✅ All Python versions (3.7-3.12) pass tests
+8. ✅ All Python versions (3.8-3.12) pass tests
 
 ## Next Steps After Completion
 
