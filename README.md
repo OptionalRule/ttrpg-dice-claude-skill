@@ -24,7 +24,14 @@ Claude will understand your request and return truly random results with complet
 
 ### Download the Skill
 
-**Latest Release:** Download `ttrpg-dice-roller.zip` from the [Releases](https://github.com/yourusername/ttrpg-dice-roller/releases) page.
+**Latest Release:** Download `ttrpg-dice-roller.zip` from:
+
+**Direct Download:**
+```
+https://github.com/OptionalRule/ttrpg-dice-claude-skill/releases/latest/download/ttrpg-dice-roller.zip
+```
+
+Or visit the [Releases](https://github.com/OptionalRule/ttrpg-dice-claude-skill/releases) page to see all versions.
 
 ### Install in Claude
 
@@ -56,30 +63,85 @@ Claude understands standard RPG dice notation, so you can use expressions like:
 - `10d10>=7` - Roll 10 ten-sided dice, count how many are 7 or higher
 - `4dF+2` - Roll 4 FATE dice and add 2
 
-## Building from Source
-
-If you want to build the skill package yourself:
+## For Developers
 
 ### Prerequisites
-- Python 3.7 or higher
+- Python 3.8 or higher
 - Git
+- [UV package manager](https://github.com/astral-sh/uv) (recommended) or pip
 
-### Steps
+### Setup Development Environment
 
 ```bash
 # Clone the repository
 git clone https://github.com/OptionalRule/ttrpg-dice-claude-skill.git
 cd ttrpg-dice-claude-skill
 
-# Build the skill package manually
+# Install UV (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies
+uv sync --all-extras
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+uv run pytest
+
+# Run with verbose output
+uv run pytest -v
+
+# Run with coverage report
+uv run pytest --cov
+
+# Run specific test file
+uv run pytest tests/test_parser.py
+
+# Run tests matching a pattern
+uv run pytest -k "fate"
+```
+
+### Code Quality
+
+```bash
+# Check code style with ruff
+uv run ruff check src/
+
+# Auto-fix style issues
+uv run ruff check --fix src/
+
+# Format code
+uv run ruff format src/
+```
+
+### Testing the Dice Roller Directly
+
+You can test the dice roller script without Claude:
+
+```bash
+# From the project root
+uv run python src/scripts/dice_roller.py "4d6kh3"
+uv run python src/scripts/dice_roller.py "2d20kh1+5"
+uv run python src/scripts/dice_roller.py "10d10>=7"
+```
+
+The script outputs structured JSON with complete roll information.
+
+### Building the Skill Package Manually
+
+For local testing only (official releases are built automatically by GitHub Actions):
+
+```bash
+# Build manually
 cd src
 zip -r ../ttrpg-dice-roller.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
 cd ..
-
-# The skill package will be created at ttrpg-dice-roller.zip
+# Package is now at ttrpg-dice-roller.zip
 ```
 
-**Note:** Official releases are built automatically by GitHub Actions. This manual build is only for testing purposes.
+For official releases, create a GitHub release and the zip is built automatically.
 
 ---
 
@@ -91,28 +153,32 @@ cd ..
 
 ```
 ttrpg-dice-roller/
+├── .github/
+│   └── workflows/
+│       ├── test.yml             # CI: Run tests on push/PR
+│       └── release.yml          # CD: Build and publish releases
 ├── src/
 │   ├── SKILL.md                 # Claude skill documentation
 │   └── scripts/
-│       └── dice_roller.py       # Core implementation (~800 lines)
-├── README.md                    # This file
-└── LICENSE.txt                  # MIT License
+│       └── dice_roller.py       # Core implementation (~814 lines)
+├── tests/                       # Comprehensive test suite (131 tests)
+│   ├── conftest.py             # Shared pytest fixtures
+│   ├── test_parser.py          # Parsing tests
+│   ├── test_evaluator.py       # Evaluation tests
+│   ├── test_modifiers.py       # Modifier tests (keep/drop/reroll/explode)
+│   ├── test_success_counting.py # Success threshold tests
+│   ├── test_fate.py            # FATE dice tests
+│   ├── test_complex.py         # Complex expression tests
+│   ├── test_errors.py          # Error handling tests
+│   └── test_statistical.py     # Statistical validation tests
+├── pyproject.toml              # Project configuration and dependencies
+├── uv.lock                     # Locked dependencies for reproducibility
+├── README.md                   # This file
+├── CLAUDE.md                   # Documentation for Claude Code
+└── LICENSE                     # MIT License
 ```
 
-Official releases are built automatically via GitHub Actions.
-
-### Testing the Dice Roller Directly
-
-You can test the dice roller script directly without Claude:
-
-```bash
-# From the project root
-python3 src/scripts/dice_roller.py "4d6kh3"
-python3 src/scripts/dice_roller.py "2d20kh1+5"
-python3 src/scripts/dice_roller.py "10d10>=7"
-```
-
-The script outputs structured JSON with complete roll information.
+Official releases are built automatically via GitHub Actions when you create a release.
 
 ### Command-Line Examples
 
@@ -395,46 +461,7 @@ Four error types with detailed messages:
 - **LimitError** - Safety limit exceeded
 - **RuntimeError** - Unexpected execution error
 
-## Development
-
-### Running Tests
-
-```bash
-# Test basic rolls
-python3 src/scripts/dice_roller.py "3d6"
-python3 src/scripts/dice_roller.py "d20+5"
-
-# Test modifiers
-python3 src/scripts/dice_roller.py "4d6kh3"
-python3 src/scripts/dice_roller.py "8d6ro1"
-python3 src/scripts/dice_roller.py "3d6!"
-
-# Test success counting
-python3 src/scripts/dice_roller.py "10d10>=7"
-
-# Test complex expressions
-python3 src/scripts/dice_roller.py "(4d6kh3)+(3d8)+5"
-
-# Test FATE dice
-python3 src/scripts/dice_roller.py "4dF+2"
-
-# Test error handling
-python3 src/scripts/dice_roller.py "4d6kh"    # Should error: missing number
-python3 src/scripts/dice_roller.py "invalid"  # Should error: invalid syntax
-```
-
-### Statistical Validation
-
-To verify randomness and uniformity:
-
-```bash
-# Roll many d6s and check distribution
-for i in {1..1000}; do
-    python3 src/scripts/dice_roller.py "1d6" | jq -r '.final'
-done | sort -n | uniq -c
-
-# Expected: roughly equal counts for 1-6
-```
+## Contributing
 
 ### Extending the Skill
 
@@ -442,10 +469,23 @@ To add new features:
 
 1. Update the parser grammar in `DiceParser` class in `src/scripts/dice_roller.py`
 2. Add evaluation logic in `DiceEvaluator` class
-3. Update `src/SKILL.md` with new notation documentation
-4. Add examples and tests
-5. Update this README
-6. Create a new GitHub release to automatically build and publish the updated skill package
+3. **Add tests** in the appropriate test file (e.g., `tests/test_modifiers.py`)
+4. Run `uv run pytest` to ensure all tests pass
+5. Run `uv run ruff check src/` to ensure code quality
+6. Update `src/SKILL.md` with new notation documentation
+7. Update this README with examples
+8. Create a pull request or push to main
+9. Create a new GitHub release to automatically build and publish the updated skill package
+
+### Testing Guidelines
+
+- **Write tests first** (TDD approach recommended)
+- Aim for >90% code coverage
+- Include tests for edge cases and error conditions
+- Use the existing test structure as examples
+- Run the full test suite before submitting changes
+
+See the [For Developers](#for-developers) section above for detailed development instructions.
 
 ## Use Cases
 
