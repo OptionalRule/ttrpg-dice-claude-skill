@@ -530,23 +530,18 @@ This project is licensed under the MIT License - see the LICENSE.txt file for de
 
 ## Support
 
-- **Issues**: Report bugs via GitHub Issues
-- **Discussions**: Ask questions in GitHub Discussions
-- **Claude Support**: Visit https://support.claude.com for skill installation help
+- **Issues**: Report bugs via [GitHub Issues](https://github.com/OptionalRule/ttrpg-dice-claude-skill/issues)
+- **Claude Support**: Visit https://docs.claude.com/en/docs/claude-code/skills for skill installation help
 
 ## References
 
 - [Dice Notation Standard](https://en.wikipedia.org/wiki/Dice_notation) - Background on notation
 - [Python secrets module](https://docs.python.org/3/library/secrets.html) - CSPRNG documentation
 - [Rejection Sampling](https://en.wikipedia.org/wiki/Rejection_sampling) - Unbiased random generation
-- [Claude Skills](https://support.claude.com) - How to use skills in Claude
+- [Claude Skills](https://docs.claude.com/en/docs/claude-code/skills) - How to use skills in Claude
 
 ---
 
 **Made with ❤️ for the tabletop RPG community**
 
 Roll on! 🎲
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE.txt file for details.
