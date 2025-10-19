@@ -1,7 +1,7 @@
 ---
 name: ttrpg-dice-roller
 description: Roll TTRPG dice with true random results using cryptographically secure RNG. Supports standard dice notation including keep/drop, rerolls, explosions, success counting, and complex expressions. Use when users need to roll dice for tabletop RPGs (D&D, Pathfinder, Storyteller, Savage Worlds, FATE, etc.) or request random dice results with specific modifiers.
-license: Complete terms in LICENSE.txt
+license: MIT License, complete terms in LICENSE.txt
 ---
 
 # TTRPG Dice Roller

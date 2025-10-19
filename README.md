@@ -2,6 +2,8 @@
 
 A Claude skill that enables true random dice rolling for tabletop RPGs using cryptographically secure random number generation.
 
+**JUST LET ME DOWNLOAD THE SKILL**: [Sure! here you go](https://github.com/OptionalRule/ttrpg-dice-claude-skill/releases/latest/download/ttrpg-dice-roller.zip)
+
 ## What Is This?
 
 This is a **skill for Claude** that lets you roll dice using standard tabletop RPG notation. When you upload this skill to Claude, you can simply say things like:
